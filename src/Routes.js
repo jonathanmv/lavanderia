@@ -3,6 +3,7 @@ import { Route, Switch } from 'react-router-dom'
 import NewItem from './NewItem'
 import QueryItems from './QueryItems'
 import Login from './Login'
+import States from './States'
 import AppliedRoute from './AppliedRoute'
 
 export default ({ childProps }) => (
@@ -11,5 +12,6 @@ export default ({ childProps }) => (
     <Route path="/newItem" exact component={NewItem} />
     <Route path="/queryItems" exact component={QueryItems} />
     <AppliedRoute path="/login" exact component={Login} props={childProps}/>
+    <AppliedRoute path="/states" exact component={States} props={childProps}/>
   </Switch>
 )

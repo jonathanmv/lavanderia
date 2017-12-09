@@ -5,7 +5,6 @@ import Button from 'material-ui/Button'
 import { FormControl, FormLabel, FormControlLabel } from 'material-ui/Form'
 import Radio, { RadioGroup } from 'material-ui/Radio'
 import Typography from 'material-ui/Typography'
-import TextField from 'material-ui/TextField'
 
 export default class NewItem extends Component {
   constructor(props) {

@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import './App.css'
 import firebaseClient from './firebaseClient'
-// import Auth from './Auth'
+
 import { Link } from 'react-router-dom'
 import Routes from './Routes'
 
@@ -47,14 +47,18 @@ class App extends Component {
   userHasAuthenticated = authenticated => this.setState({ isAuthenticated: authenticated })
 
   componentWillMount() {
-    firebaseClient.auth().onAuthStateChanged(user => this.setState({ isAuthenticated: !!user }))
+    firebaseClient
+      .auth()
+      .onAuthStateChanged(user => this.setState({
+        isAuthenticated: !!user,
+        userId: !!user && user.uid
+      }))
   }
 
   render() {
-    const { isAuthenticated } = this.state
     const childProps = {
-      isAuthenticated,
-      userHasAuthenticated: this.userHasAuthenticated
+      userHasAuthenticated: this.userHasAuthenticated,
+      ...this.state
     }
 
     return (
