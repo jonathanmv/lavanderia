@@ -30,6 +30,7 @@ class ExistingStates extends Component {
     if (this.state.reference) {
       this.state.reference.off()
     }
+    console.log('loading');
     reference.on('value', snapshot => {
       this.setState({ states: snapshot.val() })
     })
@@ -46,6 +47,13 @@ class ExistingStates extends Component {
     }
   }
 
+  componentWillUnmount() {
+    if (this.state.reference) {
+      console.log('off');
+      this.state.reference.off()
+    }
+  }
+
   deleteState = async state => {
     try {
       const name = this.state.states[state]
@@ -53,7 +61,7 @@ class ExistingStates extends Component {
         return
       }
       if (window.confirm(`Delete ${name}?`)) {
-        api.deleteUserDefinedState(this.props.userId, state)
+        await api.deleteUserDefinedState(this.props.userId, state)
         this.props.notify(`${name} deleted`)
       }
     } catch (error) {

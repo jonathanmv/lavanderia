@@ -1,46 +1,95 @@
 import React, { Component } from 'react'
-import firebaseClient from './firebaseClient'
 import Input, { InputLabel } from 'material-ui/Input'
 import Button from 'material-ui/Button'
 import { FormControl, FormLabel, FormControlLabel } from 'material-ui/Form'
 import Radio, { RadioGroup } from 'material-ui/Radio'
 import Typography from 'material-ui/Typography'
 
+import * as api from './api'
+
 export default class NewItem extends Component {
   constructor(props) {
     super(props)
-    this.state = { item: null, key: '', state: 'NEW' }
+    this.state = {
+      item: null,
+      key: '',
+      state: 'NEW',
+      userDefinedStates: null,
+      statesReference: null
+    }
   }
 
-  handleSubmit = event => {
-    event.preventDefault()
-    const user = firebaseClient.auth().currentUser
-    if (!user) {
-      return
-    }
+  componentWillMount() {
+    this.loadStates(this.props.userId)
+  }
 
-    const { key, state } = this.state
-    const item = {
-      key,
-      state,
-      updatedAt: new Date().getTime()
+  componentWillReceiveProps({ userId }) {
+    if (userId !== this.props.userId) {
+      this.loadStates(userId)
     }
-    const path = `${user.uid}/items/${key}`
-    firebaseClient.database().ref(path).set(item)
-    this.setState({ item })
+  }
+
+  handleSubmit = async event => {
+    event.preventDefault()
+    try {
+      const { userId } = this.props
+      if (!userId) {
+        return
+      }
+
+      const { key, state } = this.state
+      const item = {
+        key,
+        state,
+        updatedAt: new Date().getTime()
+      }
+      await api.setUserItem(userId, key, item)
+      this.setState({ item })
+    } catch (error) {
+
+    }
   }
 
   handleChange = event => this.setState({ [event.target.id || event.target.name]: event.target.value })
 
   validateForm = () => this.state.key.length > 0 && this.state.state.length
 
+  loadStates(userId) {
+    if (!userId) {
+      return
+    }
+
+    const statesReference = api.getUserDefinedStatesReference(userId)
+    if (this.state.statesReference) {
+      this.state.statesReference.off()
+    }
+    console.log('loading');
+    statesReference.on('value', snapshot => {
+      this.setState({ userDefinedStates: snapshot.val() })
+    })
+    this.setState({ statesReference })
+  }
+
+  getUserDefinedStates() {
+    const { userDefinedStates } = this.state
+    if (userDefinedStates) {
+      return Object.keys(userDefinedStates).map(key => ({ key, name: userDefinedStates[key] }))
+    }
+
+    return []
+  }
+
+  componentWillUnmount() {
+    if (this.state.statesReference) {
+      console.log('off');
+      this.state.statesReference.off()
+    }
+  }
+
   render() {
-    const states = [
-      {key: 'NEW', name: 'New' },
-      {key: 'STARTED', name: 'Started' },
-      {key: 'FINISHED', name: 'Finished' }
-    ]
+    const states = this.getUserDefinedStates()
     const { key, state, updatedAt } = this.state.item || {}
+    const { userDefinedStates } = this.state || {}
     return (
       <div className="NewItem">
         <form onSubmit={this.handleSubmit} noValidate autoComplete="off">
@@ -66,7 +115,7 @@ export default class NewItem extends Component {
           { key && (
             <div className="LastItem">
               <h2>Last Item</h2>
-              { key && <p>{key} - {state} - {updatedAt}</p>}
+              { key && <p>{key} - {userDefinedStates[state]} - {updatedAt}</p>}
             </div>
           )}
       </div>

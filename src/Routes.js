@@ -9,7 +9,7 @@ import AppliedRoute from './AppliedRoute'
 export default ({ childProps }) => (
   <Switch>
     <Route path="/" exact component={QueryItems} />
-    <Route path="/newItem" exact component={NewItem} />
+    <AppliedRoute path="/newItem" exact component={NewItem} props={childProps} />
     <Route path="/queryItems" exact component={QueryItems} />
     <AppliedRoute path="/login" exact component={Login} props={childProps}/>
     <AppliedRoute path="/states" exact component={States} props={childProps}/>
