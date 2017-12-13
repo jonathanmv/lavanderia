@@ -16,3 +16,15 @@ export const addUserDefinedState = (userId = '', name = '') => {
   const path = `${userId}/states/${key}`
   return firebaseClient.database().ref(path).set(name)
 }
+
+export const getUserDefinedStatesReference = userId => {
+  notEmpty(userId)
+  const path = `${userId}/states`
+  return firebaseClient.database().ref(path)
+}
+
+export const deleteUserDefinedState = (userId, state) => {
+  notEmpty(userId, state)
+  const path = `${userId}/states/${state}`
+  return firebaseClient.database().ref(path).set(null)
+}

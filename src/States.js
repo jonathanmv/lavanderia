@@ -7,10 +7,75 @@ import IconButton from 'material-ui/IconButton'
 import CloseIcon from 'material-ui-icons/Close'
 import Input, { InputLabel } from 'material-ui/Input'
 import { FormControl } from 'material-ui/Form'
+import Chip from 'material-ui/Chip'
 
 import { Title, Subheading } from './Texts'
 
 import * as api from './api'
+
+class ExistingStates extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      states: null
+    }
+  }
+
+  loadStates(userId) {
+    if (!userId) {
+      return
+    }
+
+    const reference = api.getUserDefinedStatesReference(userId)
+    if (this.state.reference) {
+      this.state.reference.off()
+    }
+    reference.on('value', snapshot => {
+      this.setState({ states: snapshot.val() })
+    })
+    this.setState({ reference })
+  }
+
+  componentWillMount() {
+    this.loadStates(this.props.userId)
+  }
+
+  componentWillReceiveProps({ userId }) {
+    if (userId !== this.props.userId) {
+      this.loadStates(userId)
+    }
+  }
+
+  deleteState = async state => {
+    try {
+      const name = this.state.states[state]
+      if (!state || !name) {
+        return
+      }
+      if (window.confirm(`Delete ${name}?`)) {
+        api.deleteUserDefinedState(this.props.userId, state)
+        this.props.notify(`${name} deleted`)
+      }
+    } catch (error) {
+      this.props.notify(error.message || error || 'Unknown error')
+    }
+  }
+
+  render() {
+    const states = this.state.states || {}
+    const keys = Object.keys(states)
+    return (
+      <Grid item xs={12}>
+        <Subheading>Existing States</Subheading>
+        {keys.map(key => <Chip
+          key={key}
+          label={states[key]}
+          onClick={event => this.deleteState(key)}
+          onRequestDelete={event => this.deleteState(key)} />)}
+      </Grid>
+    )
+  }
+}
 
 export default class States extends Component {
   constructor(props) {
@@ -18,15 +83,19 @@ export default class States extends Component {
     this.state = { name: '', notification: null, saving: false }
   }
 
+  notify(error, stateProps = {}) {
+    this.setState({ notification: error.message || error || 'Unknown error', ...stateProps })
+  }
+
   handleSubmit = async event => {
     event.preventDefault()
     try {
       const { userId } = this.props
-      this.setState({ notification: 'Saving...', saving: true })
+      this.notify('Saving...', { saving: true })
       await api.addUserDefinedState(userId, this.state.name)
-      this.setState({ notification: 'Saved', name: '', saving: false })
+      this.notify('Saved', { name: '', saving: false })
     } catch (error) {
-      this.setState({ notification: error.message || error || 'Unknown error', saving: false })
+      this.notify(error.message || error || 'Unknown error', { saving: false })
     }
   }
 
@@ -43,6 +112,11 @@ export default class States extends Component {
   }
 
   render() {
+    const childProps = {
+      notify: this.notify.bind(this),
+      ...this.props
+    }
+
     return (
       <Grid container spacing={24}>
         <Grid item xs={12}>
@@ -87,9 +161,7 @@ export default class States extends Component {
             />
           </form>
         </Grid>
-        <Grid item xs={12}>
-          <Subheading>Existing States</Subheading>
-        </Grid>
+        <ExistingStates {...childProps} />
       </Grid>
     )
   }

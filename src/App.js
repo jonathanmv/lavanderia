@@ -30,6 +30,7 @@ class AppHeader extends Component {
             ) }
             { isAuthenticated && <Link to="/newItem"><Button color="contrast">New Item</Button></Link> }
             { isAuthenticated && <Link to="/queryItems"><Button color="contrast">Search</Button></Link> }
+            { isAuthenticated && <Link to="/states"><Button color="contrast">States</Button></Link> }
           </Toolbar>
         </AppBar>
       </div>
