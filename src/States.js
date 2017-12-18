@@ -91,7 +91,7 @@ export default class States extends Component {
   }
 
   componentWillReceiveProps({ userId }) {
-    if (userId != this.props.userId) {
+    if (userId !== this.props.userId) {
       this.loadStates(userId)
     }
   }

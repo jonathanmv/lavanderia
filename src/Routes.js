@@ -10,7 +10,7 @@ export default ({ childProps }) => (
   <Switch>
     <Route path="/" exact component={QueryItems} />
     <AppliedRoute path="/newItem" exact component={NewItem} props={childProps} />
-    <Route path="/queryItems" exact component={QueryItems} />
+    <AppliedRoute path="/queryItems" exact component={QueryItems} props={childProps}/>
     <AppliedRoute path="/login" exact component={Login} props={childProps}/>
     <AppliedRoute path="/states" exact component={States} props={childProps}/>
   </Switch>

@@ -34,3 +34,9 @@ export const setUserItem = (userId, itemId, item) => {
   const path = `${userId}/items/${itemId}`
   return firebaseClient.database().ref(path).set(item)
 }
+
+export const getUserItem = (userId, itemId) => {
+  notEmpty(userId, itemId)
+  const path = `${userId}/items/${itemId}`
+  return firebaseClient.database().ref(path).once('value').then(snapshot => snapshot.val())
+}
