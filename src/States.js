@@ -21,56 +21,14 @@ class ExistingStates extends Component {
     }
   }
 
-  loadStates(userId) {
-    if (!userId) {
-      return
-    }
-
-    const reference = api.getUserDefinedStatesReference(userId)
-    if (this.state.reference) {
-      this.state.reference.off()
-    }
-    console.log('loading');
-    reference.on('value', snapshot => {
-      this.setState({ states: snapshot.val() })
-    })
-    this.setState({ reference })
-  }
-
-  componentWillMount() {
-    this.loadStates(this.props.userId)
-  }
-
-  componentWillReceiveProps({ userId }) {
-    if (userId !== this.props.userId) {
-      this.loadStates(userId)
-    }
-  }
-
-  componentWillUnmount() {
-    if (this.state.reference) {
-      console.log('off');
-      this.state.reference.off()
-    }
-  }
-
-  deleteState = async state => {
-    try {
-      const name = this.state.states[state]
-      if (!state || !name) {
-        return
-      }
-      if (window.confirm(`Delete ${name}?`)) {
-        await api.deleteUserDefinedState(this.props.userId, state)
-        this.props.notify(`${name} deleted`)
-      }
-    } catch (error) {
-      this.props.notify(error.message || error || 'Unknown error')
+  deleteState = key => {
+    if (this.props.onRequestDelete) {
+      this.props.onRequestDelete(key)
     }
   }
 
   render() {
-    const states = this.state.states || {}
+    const states = this.props.states || {}
     const keys = Object.keys(states)
     return (
       <Grid item xs={12}>
@@ -88,7 +46,11 @@ class ExistingStates extends Component {
 export default class States extends Component {
   constructor(props) {
     super(props)
-    this.state = { name: '', notification: null, saving: false }
+    this.state = {
+      name: '',
+      notification: null,
+      saving: false
+    }
   }
 
   notify(error, stateProps = {}) {
@@ -101,10 +63,48 @@ export default class States extends Component {
       const { userId } = this.props
       this.notify('Saving...', { saving: true })
       await api.addUserDefinedState(userId, this.state.name)
+      this.loadStates(userId)
       this.notify('Saved', { name: '', saving: false })
     } catch (error) {
       this.notify(error.message || error || 'Unknown error', { saving: false })
     }
+  }
+
+  deleteState = async state => {
+    try {
+      const name = this.state.states[state]
+      if (!state || !name) {
+        return
+      }
+      if (window.confirm(`Delete ${name}?`)) {
+        await api.deleteUserDefinedState(this.props.userId, state)
+        this.loadStates(this.props.userId)
+        this.notify(`${name} deleted`)
+      }
+    } catch (error) {
+      this.notify(error.message || error || 'Unknown error')
+    }
+  }
+
+  componentWillMount() {
+    this.loadStates(this.props.userId)
+  }
+
+  componentWillReceiveProps({ userId }) {
+    if (userId != this.props.userId) {
+      this.loadStates(userId)
+    }
+  }
+
+  loadStates(userId) {
+    if (!userId) {
+      return
+    }
+
+    const reference = api.getUserDefinedStatesReference(userId)
+    reference.once('value').then(snapshot => {
+      this.setState({ states: snapshot.val() })
+    })
   }
 
   handleChange = event => this.setState({ [event.target.id || event.target.name]: event.target.value })
@@ -120,11 +120,6 @@ export default class States extends Component {
   }
 
   render() {
-    const childProps = {
-      notify: this.notify.bind(this),
-      ...this.props
-    }
-
     return (
       <Grid container spacing={24}>
         <Grid item xs={12}>
@@ -169,7 +164,10 @@ export default class States extends Component {
             />
           </form>
         </Grid>
-        <ExistingStates {...childProps} />
+        <ExistingStates
+          states={this.state.states}
+          onRequestDelete={this.deleteState}
+        />
       </Grid>
     )
   }

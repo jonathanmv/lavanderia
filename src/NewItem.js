@@ -60,14 +60,9 @@ export default class NewItem extends Component {
     }
 
     const statesReference = api.getUserDefinedStatesReference(userId)
-    if (this.state.statesReference) {
-      this.state.statesReference.off()
-    }
-    console.log('loading');
-    statesReference.on('value', snapshot => {
+    statesReference.once('value').then(snapshot => {
       this.setState({ userDefinedStates: snapshot.val() })
     })
-    this.setState({ statesReference })
   }
 
   getUserDefinedStates() {
@@ -77,13 +72,6 @@ export default class NewItem extends Component {
     }
 
     return []
-  }
-
-  componentWillUnmount() {
-    if (this.state.statesReference) {
-      console.log('off');
-      this.state.statesReference.off()
-    }
   }
 
   render() {
