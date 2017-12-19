@@ -60,15 +60,15 @@ export default class QueryItems extends Component {
                 <Grid item xs={12}>
                   <Grid container>
                     <Grid item xs={2}>
-                      <Button style={{ width: '100%', height: '100%' }} aria-label="Clear" onClick={this.removeAllNumbers}>
+                      <Button style={{ touchAction: 'none', width: '100%', height: '100%' }} aria-label="Clear" onClick={this.removeAllNumbers}>
                         <ClearIcon />
                       </Button>
                     </Grid>
                     <Grid item xs={8} style={{ textAlign: 'center'}}>
-                      <Display3>{'_' + this.state.code.join('') + '_'}</Display3>
+                      <Display3>{this.state.code.join('')}</Display3>
                     </Grid>
                     <Grid item xs={2}>
-                      <Button style={{ width: '100%', height: '100%' }} aria-label="Backspace" onClick={this.removeLastNumber}>
+                      <Button style={{ touchAction: 'none', width: '100%', height: '100%' }} aria-label="Backspace" onClick={this.removeLastNumber}>
                         <BackspaceIcon />
                       </Button>
                     </Grid>
