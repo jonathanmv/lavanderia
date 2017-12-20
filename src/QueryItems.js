@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import * as api from './api'
 
 import NumericKeyboard from './NumericKeyboard'
-import { Display3 } from './Texts'
+import { Display1 } from './Texts'
 
 import Grid from 'material-ui/Grid'
 import Button from 'material-ui/Button'
@@ -47,42 +47,38 @@ export default class QueryItems extends Component {
     const text = key ? `${key} - ${state} - ${updatedAt}` : 'Enter a code'
 
     return (
-      <Grid container style={{flexGrow: 1 }}>
-        <Grid item xs={12}>
-          <Grid container direction="column" justify="space-between" alignItems="stretch">
-            <Grid item style={{ textAlign: 'center' }}>
-              <Display3>
-                {text}
-              </Display3>
-            </Grid>
+      <Grid container direction="column" justify="space-between" alignItems="stretch">
+        <Grid item style={{ textAlign: 'center' }}>
+          <Display1>
+            {text}
+          </Display1>
+        </Grid>
+        <Grid item>
+          <Grid container direction="column">
             <Grid item>
               <Grid container>
-                <Grid item xs={12}>
-                  <Grid container>
-                    <Grid item xs={2}>
-                      <Button style={{ touchAction: 'none', width: '100%', height: '100%' }} aria-label="Clear" onClick={this.removeAllNumbers}>
-                        <ClearIcon />
-                      </Button>
-                    </Grid>
-                    <Grid item xs={8} style={{ textAlign: 'center'}}>
-                      <Display3>{this.state.code.join('')}</Display3>
-                    </Grid>
-                    <Grid item xs={2}>
-                      <Button style={{ touchAction: 'none', width: '100%', height: '100%' }} aria-label="Backspace" onClick={this.removeLastNumber}>
-                        <BackspaceIcon />
-                      </Button>
-                    </Grid>
-                  </Grid>
+                <Grid item>
+                  <Button style={{ touchAction: 'none', width: '100%', height: '100%' }} aria-label="Clear" onClick={this.removeAllNumbers}>
+                    <ClearIcon />
+                  </Button>
                 </Grid>
-                <Grid item xs={12}>
-                  <NumericKeyboard onKeyPressed={this.onNumber} />
+                <Grid item style={{ textAlign: 'center', flex: 1 }}>
+                  <Display1>{this.state.code.join('')}</Display1>
                 </Grid>
-                <Grid item xs={12} style={{ textAlign: 'center'}}>
-                  <Button fab color="primary" onClick={this.queryItem}>
-                    <SearchIcon />
+                <Grid item>
+                  <Button style={{ touchAction: 'none', width: '100%', height: '100%' }} aria-label="Backspace" onClick={this.removeLastNumber}>
+                    <BackspaceIcon />
                   </Button>
                 </Grid>
               </Grid>
+            </Grid>
+            <Grid item>
+              <NumericKeyboard onKeyPressed={this.onNumber} />
+            </Grid>
+            <Grid item style={{ textAlign: 'center'}}>
+              <Button fab color="primary" onClick={this.queryItem}>
+                <SearchIcon />
+              </Button>
             </Grid>
           </Grid>
         </Grid>
