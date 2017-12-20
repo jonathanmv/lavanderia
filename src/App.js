@@ -15,25 +15,23 @@ class AppHeader extends Component {
   render() {
     const { isAuthenticated } = this.props
     return (
-      <div className="AppHeader">
-        <AppBar position="static">
-          <Toolbar>
-            <Typography type="title" color="inherit" className="AppHeader-Title">
-              Item State Tracker
-            </Typography>
-            { !isAuthenticated && (
-              <Link to="/login">
-                <Button color="contrast">
-                  Login
-                </Button>
-              </Link>
-            ) }
-            { isAuthenticated && <Link to="/newItem"><Button color="contrast">New Item</Button></Link> }
-            { isAuthenticated && <Link to="/queryItems"><Button color="contrast">Search</Button></Link> }
-            { isAuthenticated && <Link to="/states"><Button color="contrast">States</Button></Link> }
-          </Toolbar>
-        </AppBar>
-      </div>
+      <AppBar position="static">
+        <Toolbar>
+          <Typography type="title" color="inherit" className="AppHeader-Title">
+            Item State Tracker
+          </Typography>
+          { !isAuthenticated && (
+            <Link to="/login">
+              <Button color="contrast">
+                Login
+              </Button>
+            </Link>
+          ) }
+          { isAuthenticated && <Link to="/newItem"><Button color="contrast">New Item</Button></Link> }
+          { isAuthenticated && <Link to="/queryItems"><Button color="contrast">Search</Button></Link> }
+          { isAuthenticated && <Link to="/states"><Button color="contrast">States</Button></Link> }
+        </Toolbar>
+      </AppBar>
     )
   }
 }
@@ -63,14 +61,12 @@ class App extends Component {
     }
 
     return (
-      <div className="App">
+      <Grid container className="App" direction="column">
         <AppHeader {...childProps} />
-        <Grid container className="AppRoutesContainer">
-          <Grid item xs={12}>
-            <Routes childProps={childProps} />
-          </Grid>
+        <Grid item>
+          <Routes childProps={childProps} />
         </Grid>
-      </div>
+      </Grid>
     )
   }
 }
