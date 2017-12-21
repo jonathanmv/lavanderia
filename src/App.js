@@ -19,6 +19,7 @@ class Notifications extends Component {
   render() {
     return (
       <Snackbar
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         autoHideDuration={2000}
         open={!!this.props.message}
         onRequestClose={this.props.handleRequestClose}
