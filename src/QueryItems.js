@@ -23,6 +23,8 @@ export default class QueryItems extends Component {
     api.getUserItem(userId, code).then(item => {
       if (item) {
         code = ''
+      } else {
+        this.props.notify(`${code} not found`)
       }
       this.setState({ item, code })
     }).catch(error => console.error(error))

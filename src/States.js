@@ -2,9 +2,6 @@ import React, { Component } from 'react'
 
 import Grid from 'material-ui/Grid'
 import Button from 'material-ui/Button'
-import Snackbar from 'material-ui/Snackbar'
-import IconButton from 'material-ui/IconButton'
-import CloseIcon from 'material-ui-icons/Close'
 import Input, { InputLabel } from 'material-ui/Input'
 import { FormControl } from 'material-ui/Form'
 import Chip from 'material-ui/Chip'
@@ -48,25 +45,23 @@ export default class States extends Component {
     super(props)
     this.state = {
       name: '',
-      notification: null,
       saving: false
     }
-  }
-
-  notify(error, stateProps = {}) {
-    this.setState({ notification: error.message || error || 'Unknown error', ...stateProps })
   }
 
   handleSubmit = async event => {
     event.preventDefault()
     try {
       const { userId } = this.props
-      this.notify('Saving...', { saving: true })
+      this.props.notify('Saving...')
+      this.setState({ saving: true })
       await api.addUserDefinedState(userId, this.state.name)
       this.loadStates(userId)
-      this.notify('Saved', { name: '', saving: false })
+      this.props.notify('Saved')
+      this.setState({ name: '', saving: false })
     } catch (error) {
-      this.notify(error.message || error || 'Unknown error', { saving: false })
+      this.props.notify(error.message || error || 'Unknown error')
+      this.setState({ saving: false })
     }
   }
 
@@ -79,10 +74,10 @@ export default class States extends Component {
       if (window.confirm(`Delete ${name}?`)) {
         await api.deleteUserDefinedState(this.props.userId, state)
         this.loadStates(this.props.userId)
-        this.notify(`${name} deleted`)
+        this.props.notify(`${name} deleted`)
       }
     } catch (error) {
-      this.notify(error.message || error || 'Unknown error')
+      this.props.notify(error.message || error || 'Unknown error')
     }
   }
 
@@ -111,14 +106,6 @@ export default class States extends Component {
 
   validateForm = () => this.state.name.length < 1 || this.state.saving
 
-  handleRequestClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return
-    }
-
-    this.setState({ notification: null })
-  }
-
   render() {
     return (
       <Grid container spacing={24}>
@@ -143,25 +130,6 @@ export default class States extends Component {
               />
             </FormControl>
             <Button raised color="primary" type="submit" disabled={this.validateForm()}>Save</Button>
-            <Snackbar
-              autoHideDuration={2000}
-              open={!!this.state.notification}
-              onRequestClose={this.handleRequestClose}
-              SnackbarContentProps={{
-                'aria-describedby': 'notification-id',
-              }}
-              message={<span id="notification-id">{this.state.notification}</span>}
-              action={[
-                <IconButton
-                  key="close"
-                  aria-label="Close"
-                  color="inherit"
-                  onClick={this.handleRequestClose}
-                >
-                  <CloseIcon />
-                </IconButton>,
-              ]}
-            />
           </form>
         </Grid>
         <ExistingStates

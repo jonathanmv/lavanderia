@@ -47,6 +47,7 @@ export default class NewItem extends Component {
       }
       api.setUserItem(userId, key, item)
       this.setState({ item, key: '' })
+      this.props.notify(`${key} (${state}) saved`)
     } catch (error) {
       console.error(error);
       this.setState({ key, state })
