@@ -5,27 +5,33 @@ import NumericKeyboard from './NumericKeyboard'
 import { Display1 } from './Texts'
 
 import Grid from 'material-ui/Grid'
+import Button from 'material-ui/Button'
+import DoneIcon from 'material-ui-icons/Done'
 
 export default class QueryItems extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      item: null
+      item: null,
+      code: ''
     }
   }
 
-  queryItem = async (code, keyboard) => {
+  queryItem = async () => {
     const { userId } = this.props
+    let { code } = this.state
     try {
       const item = await api.getUserItem(userId, code)
-      this.setState({ item })
       if (item) {
-        keyboard.removeAllNumbers()
+        code = ''
       }
+      this.setState({ item, code })
     } catch (error) {
       console.log(error)
     }
   }
+
+  onCodeChange = code => this.setState({ code })
 
   render() {
     const { key, state, updatedAt } = this.state.item || {}
@@ -41,8 +47,13 @@ export default class QueryItems extends Component {
         <Grid item>
           <Grid container direction="column">
             <Grid item>
-              <NumericKeyboard onNumber={this.queryItem} />
+              <NumericKeyboard value={this.state.code} onChange={this.onCodeChange} />
             </Grid>
+          </Grid>
+          <Grid item style={{ textAlign: 'center'}}>
+            <Button fab color="primary" onClick={this.queryItem}>
+              <DoneIcon />
+            </Button>
           </Grid>
         </Grid>
       </Grid>

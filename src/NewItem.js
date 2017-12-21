@@ -1,11 +1,9 @@
 import React, { Component } from 'react'
 import Input, { InputLabel } from 'material-ui/Input'
 import Button from 'material-ui/Button'
-import { FormGroup, FormControl, FormLabel, FormControlLabel } from 'material-ui/Form'
+import { FormControl, FormLabel, FormControlLabel } from 'material-ui/Form'
 import Radio, { RadioGroup } from 'material-ui/Radio'
 import Typography from 'material-ui/Typography'
-
-import NumericKeyboard from './NumericKeyboard'
 
 import * as api from './api'
 
@@ -91,7 +89,6 @@ export default class NewItem extends Component {
           <FormControl component="fieldset">
             <FormLabel component="legend">State</FormLabel>
             <RadioGroup
-              row
               aria-label="state"
               name="state"
               value={this.state.state}
