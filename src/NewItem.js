@@ -1,11 +1,15 @@
 import React, { Component } from 'react'
-import Input, { InputLabel } from 'material-ui/Input'
 import Button from 'material-ui/Button'
 import { FormControl, FormLabel, FormControlLabel } from 'material-ui/Form'
 import Radio, { RadioGroup } from 'material-ui/Radio'
-import Typography from 'material-ui/Typography'
+import Grid from 'material-ui/Grid'
+
+import AddIcon from 'material-ui-icons/Add'
 
 import * as api from './api'
+
+import NumericKeyboard from './NumericKeyboard'
+import { Display1 } from './Texts'
 
 export default class NewItem extends Component {
   constructor(props) {
@@ -13,9 +17,8 @@ export default class NewItem extends Component {
     this.state = {
       item: null,
       key: '',
-      state: 'NEW',
-      userDefinedStates: null,
-      statesReference: null
+      state: null,
+      userDefinedStates: null
     }
   }
 
@@ -29,24 +32,24 @@ export default class NewItem extends Component {
     }
   }
 
-  handleSubmit = async event => {
+  handleSubmit = event => {
     event.preventDefault()
+    const { key, state } = this.state
+    const item = {
+      key,
+      state,
+      updatedAt: new Date().getTime()
+    }
     try {
       const { userId } = this.props
       if (!userId) {
         return
       }
-
-      const { key, state } = this.state
-      const item = {
-        key,
-        state,
-        updatedAt: new Date().getTime()
-      }
-      await api.setUserItem(userId, key, item)
-      this.setState({ item })
+      api.setUserItem(userId, key, item)
+      this.setState({ item, key: '' })
     } catch (error) {
-
+      console.error(error);
+      this.setState({ key, state })
     }
   }
 
@@ -61,7 +64,9 @@ export default class NewItem extends Component {
 
     const statesReference = api.getUserDefinedStatesReference(userId)
     statesReference.once('value').then(snapshot => {
-      this.setState({ userDefinedStates: snapshot.val() })
+      const userDefinedStates = snapshot.val()
+      const state = Object.keys(userDefinedStates || {})[0]
+      this.setState({ userDefinedStates, state })
     })
   }
 
@@ -78,35 +83,50 @@ export default class NewItem extends Component {
     const states = this.getUserDefinedStates()
     const { key, state, updatedAt } = this.state.item || {}
     const { userDefinedStates } = this.state || {}
-    return (
-      <div className="NewItem">
-        <form onSubmit={this.handleSubmit} noValidate autoComplete="off">
-          <Typography type="title" gutterBottom>New Item</Typography>
-          <FormControl>
-            <InputLabel htmlFor="key">Key</InputLabel>
-            <Input id="key" type="text" value={this.state.key} onChange={this.handleChange}/>
-          </FormControl>
-          <FormControl component="fieldset">
-            <FormLabel component="legend">State</FormLabel>
-            <RadioGroup
-              aria-label="state"
-              name="state"
-              value={this.state.state}
-              onChange={this.handleChange}
-            >
-              { states.map(({name, key}) => <FormControlLabel control={<Radio />} key={key} value={key} label={name} />) }
-            </RadioGroup>
-          </FormControl>
-          <Button raised color="primary" type="submit" disabled={!this.validateForm()}>Add</Button>
-        </form>
 
-          { key && (
-            <div className="LastItem">
-              <h2>Last Item</h2>
-              { key && <p>{key} - {userDefinedStates[state]} - {updatedAt}</p>}
-            </div>
-          )}
-      </div>
+    return (
+      <Grid container direction="column" justify="space-between" alignItems="stretch">
+        <Grid item style={{ textAlign: 'center' }}>
+          <Display1>New Item</Display1>
+        </Grid>
+        <Grid item>
+          <form onSubmit={this.handleSubmit} noValidate autoComplete="off">
+            <Grid container direction="column">
+              <Grid item>
+                <FormControl component="fieldset">
+                  <FormLabel component="legend">State</FormLabel>
+                  <RadioGroup
+                    row
+                    aria-label="state"
+                    name="state"
+                    value={this.state.state}
+                    onChange={this.handleChange}
+                  >
+                    { states.map(({name, key}) => <FormControlLabel control={<Radio />} key={key} value={key} label={name} />) }
+                  </RadioGroup>
+                </FormControl>
+              </Grid>
+              <Grid item>
+                <FormControl>
+                  <FormLabel component="legend">Code</FormLabel>
+                  <NumericKeyboard id={key} value={this.state.key} onChange={value => this.handleChange({ target: { id: 'key', value } })}/>
+                </FormControl>
+              </Grid>
+              <Grid item style={{ textAlign: 'center'}}>
+                <Button fab color="primary" type="submit" disabled={!this.validateForm()}>
+                  <AddIcon />
+                </Button>
+              </Grid>
+            </Grid>
+          </form>
+        </Grid>
+        { key && (
+          <Grid item>
+            <h2>Last Item</h2>
+            { key && <p>{key} - {userDefinedStates[state]} - {updatedAt}</p>}
+          </Grid>
+        )}
+      </Grid>
     )
   }
 }

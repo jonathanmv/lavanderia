@@ -17,18 +17,15 @@ export default class QueryItems extends Component {
     }
   }
 
-  queryItem = async () => {
+  queryItem = () => {
     const { userId } = this.props
     let { code } = this.state
-    try {
-      const item = await api.getUserItem(userId, code)
+    api.getUserItem(userId, code).then(item => {
       if (item) {
         code = ''
       }
       this.setState({ item, code })
-    } catch (error) {
-      console.log(error)
-    }
+    }).catch(error => console.error(error))
   }
 
   onCodeChange = code => this.setState({ code })
@@ -45,16 +42,12 @@ export default class QueryItems extends Component {
           </Display1>
         </Grid>
         <Grid item>
-          <Grid container direction="column">
-            <Grid item>
-              <NumericKeyboard value={this.state.code} onChange={this.onCodeChange} />
-            </Grid>
-          </Grid>
-          <Grid item style={{ textAlign: 'center'}}>
-            <Button fab color="primary" onClick={this.queryItem}>
-              <DoneIcon />
-            </Button>
-          </Grid>
+          <NumericKeyboard value={this.state.code} onChange={this.onCodeChange} />
+        </Grid>
+        <Grid item style={{ textAlign: 'center'}}>
+          <Button fab color="primary" onClick={this.queryItem}>
+            <DoneIcon />
+          </Button>
         </Grid>
       </Grid>
     )
