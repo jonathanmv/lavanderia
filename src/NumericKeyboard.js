@@ -20,21 +20,23 @@ export default class NumericKeyboard extends Component {
 
   onKeyPressed = event => {
     const number = event.target.name || event.target.parentElement.name
-    this.setState({ numbers: [...this.state.numbers, Number(number)] })
+    this.setNumbers([...this.state.numbers, Number(number)])
   }
 
+  setNumbers = numbers => this.setState({ numbers })
+
   removeLastNumber = () => {
-    this.setState({ numbers: this.state.numbers.slice(0, -1)})
+    this.setNumbers(this.state.numbers.slice(0, -1))
   }
 
   removeAllNumbers = () => {
-    this.setState({ numbers: [] })
+    this.setNumbers([])
   }
 
   dispatchOnNumber = () => {
     if (this.props.onNumber) {
       try {
-        this.props.onNumber(this.state.numbers.join(''))
+        this.props.onNumber(this.state.numbers.join(''), this)
       } catch (error) {
         console.error(error)
       }

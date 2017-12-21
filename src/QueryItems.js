@@ -10,16 +10,18 @@ export default class QueryItems extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      code: null,
       item: null
     }
   }
 
-  queryItem = async code => {
+  queryItem = async (code, keyboard) => {
     const { userId } = this.props
     try {
       const item = await api.getUserItem(userId, code)
       this.setState({ item })
+      if (item) {
+        keyboard.removeAllNumbers()
+      }
     } catch (error) {
       console.log(error)
     }
