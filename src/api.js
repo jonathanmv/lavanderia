@@ -3,6 +3,7 @@ import firebaseClient from './firebaseClient'
 import _ from 'lodash/string'
 
 const normalizeText = (text = '') => _.snakeCase(text.toString()).toUpperCase()
+export const getStateName = (state = '') => state.toString().split('_').map(_.capitalize).join(' ')
 
 const notEmpty = (...rest) => rest.forEach((string = '') => {
   if (!string.toString().length) {

@@ -62,7 +62,7 @@ export default class States extends Component {
       this.setState({ saving: true })
       await api.addUserDefinedState(userId, this.state.name)
       this.loadStates(userId)
-      this.props.notify('Saved')
+      this.props.notify(`${this.state.name} state saved`)
       this.setState({ name: '', saving: false })
     } catch (error) {
       this.props.notify(error.message || error || 'Unknown error')
@@ -79,7 +79,7 @@ export default class States extends Component {
       if (window.confirm(`Delete ${name}?`)) {
         await api.deleteUserDefinedState(this.props.userId, state)
         this.loadStates(this.props.userId)
-        this.props.notify(`${name} deleted`)
+        this.props.notify(`${name} state deleted`)
       }
     } catch (error) {
       this.props.notify(error.message || error || 'Unknown error')

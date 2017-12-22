@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import * as api from './api'
 
 import NumericKeyboard from './NumericKeyboard'
+import Item from './Item'
 import { Display1 } from './Texts'
 
 import Grid from 'material-ui/Grid'
@@ -33,15 +34,12 @@ export default class QueryItems extends Component {
   onCodeChange = code => this.setState({ code })
 
   render() {
-    const { key, state, updatedAt } = this.state.item || {}
-    const text = key ? `${key} - ${state} - ${updatedAt}` : 'Enter a code'
+    const { item } = this.state
 
     return (
       <Grid container direction="column" justify="space-between" alignItems="stretch">
-        <Grid item style={{ textAlign: 'center' }}>
-          <Display1>
-            {text}
-          </Display1>
+        <Grid item>
+          <Item item={item} />
         </Grid>
         <Grid item>
           <NumericKeyboard value={this.state.code} onChange={this.onCodeChange} />
