@@ -6,7 +6,7 @@ import { Display1 } from './Texts'
 
 import Grid from 'material-ui/Grid'
 import Button from 'material-ui/Button'
-import DoneIcon from 'material-ui-icons/Done'
+import SearchIcon from 'material-ui-icons/Search'
 
 export default class QueryItems extends Component {
   constructor(props) {
@@ -48,7 +48,7 @@ export default class QueryItems extends Component {
         </Grid>
         <Grid item style={{ textAlign: 'center'}}>
           <Button fab color="primary" onClick={this.queryItem}>
-            <DoneIcon />
+            <SearchIcon />
           </Button>
         </Grid>
       </Grid>

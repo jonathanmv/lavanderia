@@ -5,6 +5,7 @@ import Button from 'material-ui/Button'
 import Input, { InputLabel } from 'material-ui/Input'
 import { FormControl } from 'material-ui/Form'
 import Chip from 'material-ui/Chip'
+import Paper from 'material-ui/Paper'
 
 import { Title, Subheading } from './Texts'
 
@@ -28,13 +29,17 @@ class ExistingStates extends Component {
     const states = this.props.states || {}
     const keys = Object.keys(states)
     return (
-      <Grid item xs={12}>
-        <Subheading>Existing States</Subheading>
-        {keys.map(key => <Chip
-          key={key}
-          label={states[key]}
-          onClick={event => this.deleteState(key)}
-          onRequestDelete={event => this.deleteState(key)} />)}
+      <Grid container>
+        {
+          keys.map(key => (
+            <Grid item key={key}>
+              <Chip
+                label={states[key]}
+                onClick={event => this.deleteState(key)}
+                onRequestDelete={event => this.deleteState(key)} />
+            </Grid>
+          ))
+        }
       </Grid>
     )
   }
@@ -108,34 +113,40 @@ export default class States extends Component {
 
   render() {
     return (
-      <Grid container spacing={24}>
-        <Grid item xs={12}>
-          <Title>States</Title>
+      <Grid container direction="column">
+        <Grid item>
+          <Paper style={{ padding: '1rem' }}>
+            <Title>New State</Title>
+            <form
+              noValidate
+              autoComplete="off"
+              onSubmit={this.handleSubmit}
+            >
+              <FormControl fullWidth>
+                <InputLabel htmlFor="name">Name</InputLabel>
+                <Input
+                  id="name"
+                  type="text"
+                  value={this.state.name}
+                  onChange={this.handleChange}
+                  readOnly={this.state.saving}
+                />
+              </FormControl>
+              <div style={{ textAlign: 'right' }}>
+                <Button raised color="primary" type="submit" disabled={this.validateForm()}>Save</Button>
+              </div>
+            </form>
+          </Paper>
         </Grid>
-        <Grid item xs={12}>
-          <form
-            noValidate
-            autoComplete="off"
-            onSubmit={this.handleSubmit}
-          >
-            <Subheading>New state</Subheading>
-            <FormControl>
-              <InputLabel htmlFor="name">Name</InputLabel>
-              <Input
-                id="name"
-                type="text"
-                value={this.state.name}
-                onChange={this.handleChange}
-                readOnly={this.state.saving}
-              />
-            </FormControl>
-            <Button raised color="primary" type="submit" disabled={this.validateForm()}>Save</Button>
-          </form>
+        <Grid item>
+          <Subheading>Existing States</Subheading>
         </Grid>
-        <ExistingStates
-          states={this.state.states}
-          onRequestDelete={this.deleteState}
-        />
+        <Grid item>
+          <ExistingStates
+            states={this.state.states}
+            onRequestDelete={this.deleteState}
+          />
+        </Grid>
       </Grid>
     )
   }
