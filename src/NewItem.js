@@ -56,7 +56,7 @@ export default class NewItem extends Component {
 
   handleChange = event => this.setState({ [event.target.id || event.target.name]: event.target.value })
 
-  validateForm = () => this.state.key.length > 0 && this.state.state.length
+  validateForm = () => this.state.key.length > 0 && this.state.state && this.state.state.length
 
   loadStates(userId) {
     if (!userId) {
