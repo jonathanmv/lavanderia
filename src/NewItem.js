@@ -9,6 +9,7 @@ import AddIcon from 'material-ui-icons/Add'
 import * as api from './api'
 
 import NumericKeyboard from './NumericKeyboard'
+import Item from './Item'
 import { Display1 } from './Texts'
 
 export default class NewItem extends Component {
@@ -82,13 +83,12 @@ export default class NewItem extends Component {
 
   render() {
     const states = this.getUserDefinedStates()
-    const { key, state, updatedAt } = this.state.item || {}
-    const { userDefinedStates } = this.state || {}
+    const { userDefinedStates, item} = this.state
 
     return (
       <Grid container direction="column" justify="space-between" alignItems="stretch">
-        <Grid item style={{ textAlign: 'center' }}>
-          <Display1>New Item</Display1>
+        <Grid item>
+          <Item item={item} />
         </Grid>
         <Grid item>
           <form onSubmit={this.handleSubmit} noValidate autoComplete="off">
@@ -110,7 +110,7 @@ export default class NewItem extends Component {
               <Grid item>
                 <FormControl>
                   <FormLabel component="legend">Code</FormLabel>
-                  <NumericKeyboard id={key} value={this.state.key} onChange={value => this.handleChange({ target: { id: 'key', value } })}/>
+                  <NumericKeyboard value={this.state.key} onChange={value => this.handleChange({ target: { id: 'key', value } })}/>
                 </FormControl>
               </Grid>
               <Grid item style={{ textAlign: 'center'}}>
@@ -121,12 +121,6 @@ export default class NewItem extends Component {
             </Grid>
           </form>
         </Grid>
-        { key && (
-          <Grid item>
-            <h2>Last Item</h2>
-            { key && <p>{key} - {userDefinedStates[state]} - {updatedAt}</p>}
-          </Grid>
-        )}
       </Grid>
     )
   }
